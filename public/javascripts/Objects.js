@@ -1,14 +1,14 @@
 
-GameObject = function(bodyDef, fixDef){
+GameObject = function(bodyDef, fixDef, fill_clolor, outline_color){
   this.Shape_constructor();
   this.bodyDef = bodyDef;
   this.fixDef = fixDef;
   this.body = world.CreateBody(this.bodyDef);
   this.fixture = this.body.CreateFixture(this.fixDef);
   //check if polygon shape
-  console.log(this.fixDef.shape);
-  this.outline_color = "black";
-  this.fill_clolor = "red";
+  //console.log(this.fixDef.shape);
+  this.outline_color = outline_color || "black";
+  this.fill_clolor = fill_clolor || "pink";
 
   this.x = this.body.GetPosition().x*scale;
   this.y = this.body.GetPosition().y*scale;
@@ -43,9 +43,10 @@ gO.handleEvent = function(e){
 
 window.GameObject = createjs.promote(GameObject, "Shape");
 
-Character = function(bodyDef, fixDef){
+Character = function(bodyDef, fixDef, fill_clolor, outline_color){
   GameObject.call(this, bodyDef, fixDef);
-  this.speed = 5; //pixels per meeter
+  this.speed = 5;
+  this.max_speed = 10; //pixels per meeter
   this.marker;//place its trying to get to.
 }
 
@@ -55,7 +56,8 @@ Character.prototype.constructor = GameObject;
 Character.prototype.moveto = function(to){
   to.Multiply(1/scale);
   this.marker = to;
-  console.log("player marker changed " + this.marker)
+  //console.log("player marker changed ")
+  //console.log( to);
 }
 
 Character.prototype.handleEvent = function(e){
@@ -66,14 +68,22 @@ Character.prototype.handleEvent = function(e){
     if(this.fixture.TestPoint(this.marker)){
       this.marker = null;
       this.body.SetLinearVelocity(new b2Vec2());
+      console.log('arrived');
     }else{
 
+      var velocity = this.body.GetLinearVelocity();
+      var speed = velocity.Length();
+      //console.log(this.max_speed)
+      if(speed > this.max_speed){
+        this.body.SetLinearVelocity( velocity.Multiply((this.max_speed/speed)));
+      }else{
+          var dir = this.marker.Copy();
+          dir.Subtract(this.body.GetPosition());
+          dir.Multiply(this.speed);
+          //console.log(dir);
+          this.body.ApplyForce(dir, this.body.GetPosition());
+      }
 
-      var dir = this.marker.Copy();
-      dir.Subtract(this.body.GetPosition());
-      dir.Multiply(this.speed);
-      //console.log(dir);
-      this.body.ApplyForce(dir, this.body.GetPosition());
     }
   }
 }
