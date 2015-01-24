@@ -7,12 +7,18 @@ GameObject = function(sprite_sheet, bodyDef, fixDef){
   this.body = world.CreateBody(this.bodyDef);
   this.body.SetFixedRotation(true);
   this.fixture = this.body.CreateFixture(this.fixDef);
+
+  this.regX = this.body.GetPosition().x * scale ;
+  this.regY = this.body.GetPosition().y * scale;
+
   //check if polygon shape
   //console.log(this.fixDef.shape);
   //Fucking hardcoded it. Sue me
+  setTimeout(function(){
+    var bounds = 16;
+    this.setTransform(0,0,ppt_w/bounds, ppt_h/bounds)
 
-      var bounds = 16;
-      this.setTransform(0,0,ppt_w/bounds, ppt_h/bounds)
+  }.bind(this), 50)
 
 
 }
@@ -21,7 +27,7 @@ var gO = createjs.extend(GameObject, createjs.Sprite);
 
 gO.handleEvent = function(e){
 
-  this.x = this.body.GetPosition().x * scale;
+  this.x = this.body.GetPosition().x * scale ;
   this.y = this.body.GetPosition().y * scale;
   this.rotation = this.body.GetAngle() * (180/Math.PI);
   //console.log("child tick");
@@ -69,7 +75,7 @@ Character.prototype.handleEvent = function(e){
   if(this.marker){
     if(this.fixture.TestPoint(this.marker) || this.collided){
       this.marker = null;
-      this.body.SetLinearVelocity(new b2Vec2());
+      this.body.SetLinearVelocity(new b2Vec2(0,0));
       this.collided = false;
       console.log('arrived');
     }else{

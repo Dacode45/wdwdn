@@ -10,6 +10,7 @@
  var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
  var b2Math = Box2D.b2
  var b2Listener = Box2D.Dynamics.b2ContactListener;
+ var b2AABB = Box2D.Collision.b2AABB;
 
  var width, height;
  var world//phsyics
@@ -18,7 +19,7 @@
  var scale = 30; //pixels per meter
 
 
- var player, viewport;
+ var player, stage;
  var characters = [];
 
  //preloading files
@@ -90,15 +91,11 @@
        createjs.Ticker.setFPS(60);
        createjs.Ticker.addEventListener('tick', tick);
 
-       viewport = new createjs.Container();
-       viewport.x = 0;
-       viewport.y = 0;
 
        var circle = new createjs.Shape();
 
        var background = setUpBackground();
        stage.addChild(background);
-       stage.addChild(viewport);
 
        gui.addChild(setUpBackground('white'));
 
@@ -131,7 +128,7 @@
          10//num of position iterations
        );
 
-       centerCamera();
+      // centerCamera();
 
        stage.update();
        gui.update();
@@ -155,6 +152,7 @@
        bodyDef.position.x = 0;
        bodyDef.position.y = 0;
        var topWall = new GameObject(r_tiles, bodyDef, fixDef)
+      // stage.addChild(topWall)
        bodyDef.position.y = 480/scale;
        var bottomWall = new GameObject(r_tiles, bodyDef, fixDef)
        fixDef.shape.SetAsBox(10/scale, 720/scale);
@@ -174,6 +172,8 @@
        var w = raw_map[0].length;
        ppt_w = stage.canvas.width/w;//pixel per tile width
        ppt_h = stage.canvas.height/h;//pixel per tile height
+
+       console.log(stage);
 
        var fixDef = new b2FixtureDef;
        fixDef.density = 1.0;
@@ -204,7 +204,7 @@
                      bodyDef.position.y = i*ppt_h/scale;
                      var o = new GameObject(tile_sheet, bodyDef, fixDef);
                      o.gotoAndStop(tile);
-                     viewport.addChild(o);
+                     stage.addChild(o);
                      createjs.Ticker.addEventListener("tick", o);
 
                      break;
@@ -220,7 +220,7 @@
                        var o = new GameObject(tile_sheet, bodyDef, fixDef);
                        //console.log(o);
                        o.gotoAndStop(tile);
-                       viewport.addChild(o);
+                       stage.addChild(o);
                        createjs.Ticker.addEventListener("tick", o);
 
                        break;
@@ -259,7 +259,7 @@
 
                    characters[i] = new Character(r_tiles,bodyDef, fixDef);
                    characters[i].gotoAndStop(3);
-                   viewport.addChild(characters[i]);
+                   stage.addChild(characters[i]);
                    createjs.Ticker.addEventListener('tick', characters[i]);
                  }
 
@@ -270,9 +270,9 @@
                }
 
                function centerCamera(){
-                 viewport.x = -player.x + stage.canvas.width/2;
-                 viewport.y = -player.y + stage.canvas.height/2;
-                 // console.log(viewport.x);
+                 //stage.x = -player.x + stage.canvas.width/2;
+                 //stage.y = -player.y + stage.canvas.height/2;
+                 // console.log(stage.x);
                }
 
                function setUpDebug(){
