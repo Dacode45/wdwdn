@@ -1,48 +1,33 @@
 
-GameObject = function(bodyDef, fixDef, fill_clolor, outline_color){
-  this.Shape_constructor();
+GameObject = function(sprite_sheet, bodyDef, fixDef){
+  this.Sprite_constructor(sprite_sheet);
   this.bodyDef = bodyDef;
   this.fixDef = fixDef;
+
   this.body = world.CreateBody(this.bodyDef);
   this.body.SetFixedRotation(true);
   this.fixture = this.body.CreateFixture(this.fixDef);
   //check if polygon shape
   //console.log(this.fixDef.shape);
-  this.outline_color = outline_color || "black";
-  this.fill_clolor = fill_clolor || "pink";
+  //Fucking hardcoded it. Sue me
 
-  this.x = this.body.GetPosition().x*scale;
-  this.y = this.body.GetPosition().y*scale;
+      var bounds = 16;
+      this.setTransform(0,0,ppt_w/bounds, ppt_h/bounds)
 
-  this.draw_object_from_physics = function(){
-    this.graphics.clear();
-
-    var vertices = this.fixDef.shape.m_vertices;
-    this.graphics.beginStroke(this.outline_color).beginFill(this.fill_clolor);
-    this.graphics.moveTo(vertices[0].x*scale, vertices[0].y*scale);
-    for(var i = 1; i < vertices.length; i++){
-      this.graphics.lineTo(vertices[i].x*scale, vertices[i].y*scale)
-    }
-    this.graphics.lineTo(vertices[0].x*scale, vertices[0].y*scale);
-
-  }
-
-
-  this.draw_object_from_physics();
 
 }
 
-var gO = createjs.extend(GameObject, createjs.Shape);
-
+var gO = createjs.extend(GameObject, createjs.Sprite);
 
 gO.handleEvent = function(e){
+
   this.x = this.body.GetPosition().x * scale;
   this.y = this.body.GetPosition().y * scale;
   this.rotation = this.body.GetAngle() * (180/Math.PI);
   //console.log("child tick");
 }
 
-window.GameObject = createjs.promote(GameObject, "Shape");
+window.GameObject = createjs.promote(GameObject, "Sprite");
 
 Character = function(bodyDef, fixDef, fill_clolor, outline_color){
   GameObject.call(this, bodyDef, fixDef, fill_clolor, outline_color);
@@ -60,6 +45,7 @@ Character = function(bodyDef, fixDef, fill_clolor, outline_color){
 
   world.SetContactListener(this.collision_listener);
 
+  //Wehn stuff is clicked
   this.on("click", function(){
     this.dialogBox = new Dialog(gui.canvas.width, 300, this, this.dialog_color);
     gui.addChild(this.dialogBox);
@@ -72,8 +58,8 @@ Character.prototype.constructor = GameObject;
 Character.prototype.moveto = function(to){
   to.Multiply(1/scale);
   this.marker = to;
-  //console.log("player marker changed ")
-  //console.log( to);
+  console.log("player marker changed ")
+  console.log( to);
 }
 
 Character.prototype.handleEvent = function(e){

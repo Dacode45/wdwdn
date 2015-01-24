@@ -5,8 +5,17 @@
     background:black;
     color:white;
   }
-  canvas{
-    margin: auto;
+  #gameCanvas{
+    position:absolute;
+  }
+  #guiCanvas{
+    position:absolute;
+    left: 730px;
+  }
+
+  #debugCanvas{
+    position:absolute;
+    top: 600px;
   }
 
 </style>
@@ -18,6 +27,9 @@
 <p>Welcome to <%=title%></p>
 
 <canvas id="gameCanvas" width="720" height="480">
+</canvas>
+
+<canvas id="debugCanvas" width="720" height="480">
 </canvas>
 
 <canvas id="guiCanvas" width="300" height="480">
