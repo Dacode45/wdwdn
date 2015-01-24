@@ -158,7 +158,6 @@
              break;
              //chair
              case 1:
-               fixDef.filter.groupIndex = -1;
                fixDef.shape = new b2PolygonShape;
                fixDef.shape.SetAsBox(ppt_w/2/scale, ppt_h/2/scale);
 
@@ -194,8 +193,7 @@
              fixDef.density = 1.0;
              fixDef.friction = .5;
              fixDef.restitution = .2;
-             fixDef.filter.groupIndex = -1;
-
+             
              var bodyDef = new b2BodyDef;
 
              bodyDef.type = b2Body.b2_dynamicBody;
