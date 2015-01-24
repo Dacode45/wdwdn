@@ -19,6 +19,11 @@ var fixDef;
 var bodyDef;
 
 var player;
+
+//preloading files
+var raw_map;
+
+
 function init(){
   world = new b2World(new b2Vec2(0, 0), true)
   stage = new createjs.Stage("gameCanvas");
@@ -40,9 +45,7 @@ function init(){
 
     var dir = new b2Vec2(evt.stageX, evt.stageY);
     player.moveto(dir);
-    dir.Subtract(player.body.GetPosition());
-    console.log(dir);
-    player.body.ApplyForce(dir, player.body.GetPosition());
+
   });
 }
 
@@ -61,7 +64,7 @@ function tick(){
 function setupWorld(){
 
   fixDef.density = 1.0;
-  fixDef.friction = .5;
+  fixDef.friction = 5;
   fixDef.restitution = .2;
 
 
@@ -87,29 +90,25 @@ function setupCharacters(){
 
   bodyDef.type = b2Body.b2_dynamicBody;
    for(var i = 0; i < 10; ++i) {
-            if(Math.random() > 0.5) {
-               fixDef.shape = new b2PolygonShape;
-               fixDef.shape.SetAsBox(
+            fixDef.shape = new b2PolygonShape;
+            fixDef.shape.SetAsBox(
                      Math.random() + 0.1 //half width
                   ,  Math.random() + 0.1 //half height
                );
-            } else {
-               fixDef.shape = new b2CircleShape(
-                  Math.random() + 0.1 //radius
-               );
-            }
+
             bodyDef.position.x = (Math.random() * 720)/scale;
             bodyDef.position.y = (Math.random() * 480)/scale;
             var o = new GameObject(bodyDef, fixDef);
-            o.graphics.beginFill("red").drawCircle(0,0,50);
             stage.addChild(o);
             createjs.Ticker.addEventListener("tick", o);
     }
     bodyDef.position.x = ( 300)/scale;
     bodyDef.position.y = ( 200)/scale;
     player = new Character(bodyDef, fixDef);
-    player.graphics.beginFill("green").drawCircle(0,0,50);
+    player.fill_color = "green"
+    player.draw_object_from_physics();
     stage.addChild(player);
+    stage.update();
     createjs.Ticker.addEventListener('tick', player);
 
          //setup debug draw
