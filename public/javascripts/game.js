@@ -9,10 +9,12 @@
  var b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
  var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
  var b2Math = Box2D.b2
+ var b2Listener = Box2D.Dynamics.b2ContactListener;
 
  var width, height;
  var world//phsyics
- , stage;//drawing canvas
+ , stage,//drawing canvas
+   gui;//Gui Canvas;
  var scale = 30; //pixels per meter
 
 
@@ -53,6 +55,8 @@
    function init(){
      world = new b2World(new b2Vec2(0, 0), true)
      stage = new createjs.Stage("gameCanvas");
+     gui = new createjs.Stage("guiCanvas");
+
      height = stage.canvas.height;
      width = stage.canvas.width;
 
@@ -69,6 +73,8 @@
      stage.addChild(background);
      stage.addChild(viewport);
 
+     gui.addChild(setUpBackground('white'));
+
      setupWorld();
 
 
@@ -83,9 +89,10 @@
      setUpDebug();
    }
 
-   function setUpBackground(){
+   function setUpBackground(color){
+     var c = color || "#F4A460";
      var background = new createjs.Shape();
-     background.graphics.beginFill("#F4A460").drawRect(0,0,stage.canvas.width, stage.canvas.height);
+     background.graphics.beginFill(c).drawRect(0,0,stage.canvas.width, stage.canvas.height);
      //updates
      return background
    }
@@ -100,6 +107,7 @@
      centerCamera();
 
      stage.update();
+     gui.update();
     // world.DrawDebugData();
      world.ClearForces();
      //console.log("hi");
@@ -191,9 +199,9 @@
            function setupCharacters(){
              var fixDef = new b2FixtureDef;
              fixDef.density = 1.0;
-             fixDef.friction = .5;
+             fixDef.friction = 5;
              fixDef.restitution = .2;
-             
+
              var bodyDef = new b2BodyDef;
 
              bodyDef.type = b2Body.b2_dynamicBody;
@@ -207,7 +215,7 @@
              createjs.Ticker.addEventListener('tick', player);
 
             //fixDef.filter.groupIndex = -1;
-
+             bodyDef.type = b2Body.b2_dynamicBody;
              for(var i = 0; i < 20; i++){
                bodyDef.position.x = Math.random()*width/scale;
                bodyDef.position.y = Math.random()*height/scale;
