@@ -4,6 +4,7 @@ GameObject = function(bodyDef, fixDef, fill_clolor, outline_color){
   this.bodyDef = bodyDef;
   this.fixDef = fixDef;
   this.body = world.CreateBody(this.bodyDef);
+  this.body.SetFixedRotation(true);
   this.fixture = this.body.CreateFixture(this.fixDef);
   //check if polygon shape
   //console.log(this.fixDef.shape);
@@ -44,7 +45,7 @@ gO.handleEvent = function(e){
 window.GameObject = createjs.promote(GameObject, "Shape");
 
 Character = function(bodyDef, fixDef, fill_clolor, outline_color){
-  GameObject.call(this, bodyDef, fixDef);
+  GameObject.call(this, bodyDef, fixDef, fill_clolor, outline_color);
   this.speed = 5;
   this.max_speed = 10; //pixels per meeter
   this.marker;//place its trying to get to.
@@ -62,7 +63,7 @@ Character.prototype.moveto = function(to){
 
 Character.prototype.handleEvent = function(e){
   GameObject.prototype.handleEvent.call(this, e);
-  this.body.SetFixedRotation(true);
+
 //  console.log("update")
   if(this.marker){
     if(this.fixture.TestPoint(this.marker)){

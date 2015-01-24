@@ -17,6 +17,7 @@
 
 
  var player, viewport;
+ var characters = [];
 
  //preloading files
  var queue = new createjs.LoadQueue(true);
@@ -52,8 +53,8 @@
    function init(){
      world = new b2World(new b2Vec2(0, 0), true)
      stage = new createjs.Stage("gameCanvas");
-     height = document.getElementById("gameCanvas").height;
-     width = document.getElementById("gameCanvas").width;
+     height = stage.canvas.height;
+     width = stage.canvas.width;
 
      createjs.Ticker.setFPS(60);
      createjs.Ticker.addEventListener('tick', tick);
@@ -78,6 +79,8 @@
        player.moveto(dir);
 
      });
+
+     setUpDebug();
    }
 
    function setUpBackground(){
@@ -116,15 +119,14 @@
      fixDef.shape.SetAsBox(720/scale, 10/scale);
      bodyDef.position.x = 0;
      bodyDef.position.y = 0;
-     world.CreateBody(bodyDef).CreateFixture(fixDef);
+     var topWall = new GameObject(bodyDef, fixDef, "gray")
      bodyDef.position.y = 480/scale;
-     world.CreateBody(bodyDef).CreateFixture(fixDef);
+     var bottomWall = new GameObject(bodyDef, fixDef, "brown")
      fixDef.shape.SetAsBox(10/scale, 720/scale);
      bodyDef.position.y = 0;
-     world.CreateBody(bodyDef).CreateFixture(fixDef);
+     var leftWall = new GameObject(bodyDef, fixDef, "brown")
      bodyDef.position.x = 720/scale;
-     world.CreateBody(bodyDef).CreateFixture(fixDef);
-
+     var rightWall = new GameObject(bodyDef, fixDef, "brown")
 
    }
 
@@ -156,7 +158,7 @@
              break;
              //chair
              case 1:
-               fixDef.filter.groupIndex = -2;
+               fixDef.filter.groupIndex = -1;
                fixDef.shape = new b2PolygonShape;
                fixDef.shape.SetAsBox(ppt_w/2/scale, ppt_h/2/scale);
 
@@ -169,7 +171,6 @@
                //table
                case 2:
 
-                 fixDef.filter.groupIndex = -1;
                  fixDef.shape = new b2PolygonShape;
                  fixDef.shape.SetAsBox(ppt_w/2/scale, ppt_h/2/scale);
 
@@ -193,7 +194,7 @@
              fixDef.density = 1.0;
              fixDef.friction = .5;
              fixDef.restitution = .2;
-             fixDef.filter.groupIndex = -2;
+             fixDef.filter.groupIndex = -1;
 
              var bodyDef = new b2BodyDef;
 
@@ -204,18 +205,23 @@
              bodyDef.position.x = ( 80)/scale;
              bodyDef.position.y = ( 80)/scale;
              player = new Character(bodyDef, fixDef, "green");
-            // console.log(player);
              viewport.addChild(player);
              createjs.Ticker.addEventListener('tick', player);
 
+            //fixDef.filter.groupIndex = -1;
+
+             for(var i = 0; i < 20; i++){
+               bodyDef.position.x = Math.random()*width/scale;
+               bodyDef.position.y = Math.random()*height/scale;
+
+               characters[i] = (new Character(bodyDef, fixDef, "pink"));
+               viewport.addChild(characters[i]);
+             }
+
+
+
              //setup debug draw
-             var debugDraw = new b2DebugDraw();
-             debugDraw.SetSprite(document.getElementById("gameCanvas").getContext("2d"));
-             debugDraw.SetDrawScale(30.0);
-             debugDraw.SetFillAlpha(0.5);
-             debugDraw.SetLineThickness(1.0);
-             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-             world.SetDebugDraw(debugDraw);
+
            }
 
            function centerCamera(){
@@ -224,5 +230,14 @@
             // console.log(viewport.x);
            }
 
+           function setUpDebug(){
+             var debugDraw = new b2DebugDraw();
+             debugDraw.SetSprite(document.getElementById("gameCanvas").getContext("2d"));
+             debugDraw.SetDrawScale(30.0);
+             debugDraw.SetFillAlpha(0.5);
+             debugDraw.SetLineThickness(1.0);
+             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+             world.SetDebugDraw(debugDraw);
+           }
 
            window.onload = init;
